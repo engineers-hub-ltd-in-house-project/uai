@@ -131,7 +131,8 @@ export class SessionManager {
         return;
       }
 
-      console.log(chalk.blue('📋 セッション一覧:\n'));
+      console.log(chalk.blue('📋 セッション一覧:'));
+      console.log(chalk.gray('   (詳細表示: uai sessions --show <セッションID>)\n'));
 
       const sessions: Session[] = [];
       for (const file of sessionFiles) {
@@ -167,7 +168,8 @@ export class SessionManager {
             chalk.gray(`  ${timeStr} `) +
             `${toolIcon} ${chalk.cyan(session.tool)} ` +
             chalk.gray(`(${messageCount}メッセージ) `) +
-            chalk.blue(`📁 ${projectName}`)
+            chalk.blue(`📁 ${projectName} `) +
+            chalk.gray(`[${session.id.substring(0, 8)}...]`)
           );
         }
         console.log('');
@@ -183,9 +185,23 @@ export class SessionManager {
    */
   async showSession(sessionId: string): Promise<void> {
     try {
-      const session = await this.loadSession(sessionId);
+      // 短縮IDの場合、完全なIDを検索
+      let session = await this.loadSession(sessionId);
+      
+      if (!session && sessionId.length < 36) {
+        // 短縮IDで検索
+        const files = await fs.readdir(this.sessionDir);
+        const matchingFile = files.find(f => f.startsWith(sessionId) && f.endsWith('.json'));
+        
+        if (matchingFile) {
+          const fullId = path.basename(matchingFile, '.json');
+          session = await this.loadSession(fullId);
+        }
+      }
+      
       if (!session) {
         console.log(chalk.red('セッションが見つかりません'));
+        console.log(chalk.gray('ヒント: セッションIDの最初の8文字以上を指定してください'));
         return;
       }
 
