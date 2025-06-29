@@ -1,0 +1,28 @@
+# ESLintが無視するファイル
+
+# ビルド出力
+dist/
+build/
+out/
+coverage/
+
+# 依存関係
+node_modules/
+.pnp.*
+.yarn/
+
+# 設定ファイル
+*.config.js
+*.config.ts
+
+# 型定義ファイル
+*.d.ts
+
+# テストファイル（必要に応じて）
+# **/*.test.ts
+# **/*.spec.ts
+
+# その他
+.eslintrc.js
+.prettierrc.js
+lefthook.js

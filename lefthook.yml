@@ -1,0 +1,68 @@
+# lefthook.yml
+# Git hooks configuration for UAI project
+
+# Lefthook設定
+skip_output:
+  - meta
+  - success
+
+# Pre-commit フック
+pre-commit:
+  parallel: true
+  commands:
+    # TypeScript型チェック
+    typecheck:
+      glob: "*.{ts,tsx}"
+      run: npm run typecheck
+      
+    # ESLintチェック
+    eslint:
+      glob: "*.{ts,tsx}"
+      run: npx eslint {staged_files}
+      
+    # Prettierフォーマット
+    prettier:
+      glob: "*.{ts,tsx,js,jsx,json,md,yml,yaml}"
+      run: npx prettier --write {staged_files} && git add {staged_files}
+      
+    # Markdownリント
+    markdownlint:
+      glob: "*.md"
+      run: npx markdownlint {staged_files} --fix && git add {staged_files}
+
+# Pre-push フック
+pre-push:
+  parallel: true
+  commands:
+    # ビルドチェック
+    build:
+      run: npm run build
+      
+    # 全体的なリントチェック
+    lint-all:
+      run: npm run check:all
+
+# Commit-msg フック
+commit-msg:
+  commands:
+    # Conventional Commits チェック
+    commitlint:
+      run: |
+        # コミットメッセージの形式をチェック
+        commit_regex='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{1,100}$'
+        if ! grep -qE "$commit_regex" "$1"; then
+          echo "❌ Invalid commit message format!"
+          echo "📝 Format: <type>(<scope>): <subject>"
+          echo "📋 Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+          echo "Example: feat(claude): add session recording feature"
+          exit 1
+        fi
+
+# Scripts
+scripts:
+  "pre-commit":
+    runner: bash
+  "pre-push":
+    runner: bash
+  "commit-msg":
+    runner: bash

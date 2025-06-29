@@ -1,0 +1,40 @@
+# Prettierが無視するファイル
+
+# ビルド出力
+dist/
+build/
+out/
+coverage/
+
+# 依存関係
+node_modules/
+.pnp.*
+.yarn/
+
+# ログ
+*.log
+logs/
+
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# エディタ設定
+.vscode/
+.idea/
+
+# 環境ファイル
+.env*
+
+# パッケージロックファイル
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 一時ファイル
+*.tmp
+*.temp
+.cache/
+
+# TypeScript
+*.tsbuildinfo
